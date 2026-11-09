@@ -54,12 +54,15 @@
         <a class="button is-link" href="https://huggingface.co/spaces/eulermaxwell/AnalogRetriever" target="_blank" rel="noopener">
           <span class="icon"><i class="fas fa-rocket"></i></span><span>Live Demo</span>
         </a>
-        <span class="button is-ar-soon">
-          <span class="icon"><i class="fab fa-github"></i></span><span>Code</span><span class="soon-badge">SOON</span>
-        </span>
-        <span class="button is-ar-soon">
-          <span class="icon"><i class="fas fa-database"></i></span><span>Dataset</span><span class="soon-badge">SOON</span>
-        </span>
+        <a class="button is-ar-dark" href="https://github.com/yihan-wa/AnalogRetriever_ICCAD" target="_blank" rel="noopener">
+          <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+        </a>
+        <a class="button is-ar-dark" href="https://huggingface.co/eulermaxwell/AnalogRetriever" target="_blank" rel="noopener">
+          <span class="icon"><i class="fas fa-cube"></i></span><span>Model</span>
+        </a>
+        <a class="button is-ar-dark" href="https://huggingface.co/datasets/eulermaxwell/AnalogRetriever-data" target="_blank" rel="noopener">
+          <span class="icon"><i class="fas fa-database"></i></span><span>Dataset</span>
+        </a>
       </div>
     </div>
   </div>
@@ -71,8 +74,8 @@
     <h2 class="title is-3 ar-h2">Try It Live</h2>
     <div class="content has-text-justified">
       <p>
-        Query AnalogRetriever interactively right here &mdash; search by text, schematic, or netlist and
-        retrieve matching analog circuits across modalities. Hosted on Hugging Face Spaces.
+        Query AnalogRetriever interactively right here &mdash; describe a circuit in natural language and
+        retrieve matching schematics and SPICE netlists. Hosted on Hugging Face Spaces.
       </p>
       <p class="has-text-centered">
         <a class="button is-link is-medium" href="https://huggingface.co/spaces/eulermaxwell/AnalogRetriever" target="_blank" rel="noopener">
@@ -119,14 +122,15 @@
       </p>
       <p>
         We first build a high-quality dataset on top of Masala-CHAI through a two-stage repair pipeline that
-        raises the netlist compile rate from <b>22% to 100%</b>. Built on this foundation, AnalogRetriever encodes
+        raises the netlist compile rate from <b>22.0% to 99.97%</b>. Built on this foundation, AnalogRetriever encodes
         schematics and descriptions with a vision-language model and netlists with a port-aware relational graph
         convolutional network (RGCN), mapping all three modalities into a shared embedding space via
         <b>curriculum contrastive learning</b>. Experiments show that AnalogRetriever achieves an average
         <b>Recall@1 of 75.2%</b> across all six cross-modal retrieval directions, significantly outperforming
         existing baselines. When integrated into the AnalogCoder agentic framework as a retrieval-augmented
         generation module, it consistently improves functional pass rates and enables previously unsolved tasks
-        to be completed. Our code and dataset will be released.
+        to be completed. Code and data:
+        <a href="https://github.com/yihan-wa/AnalogRetriever_ICCAD" target="_blank" rel="noopener">https://github.com/yihan-wa/AnalogRetriever_ICCAD</a>.
       </p>
     </div>
 
@@ -134,7 +138,7 @@
     <div class="columns ar-stats">
       <div class="column"><div class="ar-stat-card"><div class="ar-stat-num">75.2%</div><div class="ar-stat-label">Avg Recall@1 across 6 cross-modal directions</div></div></div>
       <div class="column"><div class="ar-stat-card"><div class="ar-stat-num">15&times;</div><div class="ar-stat-label">over the strongest baseline (CROP, 4.7%)</div></div></div>
-      <div class="column"><div class="ar-stat-card"><div class="ar-stat-num">22&rarr;100%</div><div class="ar-stat-label">netlist compile rate after refinement</div></div></div>
+      <div class="column"><div class="ar-stat-card"><div class="ar-stat-num">22&rarr;99.97%</div><div class="ar-stat-label">netlist compile rate after refinement</div></div></div>
       <div class="column"><div class="ar-stat-card"><div class="ar-stat-num">86.7%</div><div class="ar-stat-label">new SoTA on AnalogCoder (Claude Sonnet 4.6 + RAG)</div></div></div>
     </div>
   </div>
@@ -151,8 +155,8 @@
         with a pretrained CLIP backbone (bottom 16 of 24 ViT blocks frozen to avoid catastrophic forgetting),
         while netlists are parsed into heterogeneous graphs with <b>20 port-aware edge types</b> covering all device
         terminals (MOSFET drain/gate/source/bulk, BJT collector/base/emitter, diodes, passives, controlled sources,
-        and shared-net connections). The model is trained with tri-modal contrastive learning, an auxiliary
-        circuit-type classification loss, and a three-phase curriculum with hard-negative mining.
+        and shared-net connections). The model is trained with tri-modal contrastive learning and a
+        three-phase curriculum with hard-negative mining.
       </p>
     </div>
     <div class="ar-figure">
@@ -200,16 +204,15 @@
 <!-- ===================== DATASET ===================== -->
 <section class="section">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 ar-h2">High-Quality Tri-Modal Dataset
-      <span class="soon-badge" style="vertical-align:middle;">COMING SOON</span>
-    </h2>
+    <h2 class="title is-3 ar-h2">High-Quality Tri-Modal Dataset</h2>
     <div class="content has-text-justified">
       <p>
         We build upon Masala-CHAI, the largest publicly available tri-modal analog circuit dataset. Our audit
-        revealed severe quality issues: of the 6,371 schematic images, only <b>22.0% compile</b> under Ngspice and
-        a mere 11.4% pass a DC operating-point check. We design a <b>two-stage LLM-based refinement pipeline</b>,
+        revealed severe quality issues: of the 6,371 schematic images, only 6,069 have paired SPICE netlists and
+        captions, and among those only <b>22.0% compile</b> under Ngspice and a mere 11.4% pass a DC operating-point check. We design a <b>two-stage LLM-based refinement pipeline</b>,
         connected by an Ngspice simulator acting as the ground-truth oracle, that audits and repairs the dataset
-        into <b>6,354 verified triplets</b> with near-100% compilation and DC pass rate.
+        into <b>6,371 refined triplets</b> with a 99.97% compilation rate, of which 6,354 pass both the compilation
+        and DC checks.
       </p>
     </div>
 
@@ -218,7 +221,7 @@
       <p class="ar-caption">
         <b>Figure 4. Two-stage LLM-based dataset refinement pipeline.</b> Stage 1 performs initial netlist repair with
         Ngspice validation; Stage 2 applies iterative feedback-guided refinement, where a teacher model repairs
-        failed cases using DC error logs until convergence.
+        failed cases using the Ngspice error logs for up to five iterations.
       </p>
     </div>
 
@@ -245,7 +248,7 @@
             </thead>
             <tbody>
               <tr>
-                <td class="rowhead">Original MASALA-Chai</td>
+                <td class="rowhead">Original Masala-CHAI</td>
                 <td>6,069</td><td class="v">22.0</td><td class="v">11.4</td>
               </tr>
               <tr>
@@ -254,10 +257,10 @@
               </tr>
               <tr>
                 <td class="rowhead">+ Stage 2 (Feedback Refinement)</td>
-                <td>6,371</td><td class="v">100.0</td><td class="v">99.7</td>
+                <td>6,371</td><td class="v">99.97</td><td class="v">99.7</td>
               </tr>
               <tr class="hero-row blk-sep">
-                <td class="rowhead">Final (after filtering)</td>
+                <td class="rowhead">Passing both checks</td>
                 <td>6,354</td><td class="v">100.0</td><td class="v">100.0</td>
               </tr>
             </tbody>
@@ -265,7 +268,7 @@
         </div>
         <p class="tbl-caption">
           <b>Table 1.</b> Dataset quality before and after our two-stage refinement &mdash; compile rate
-          22.0% &rarr; 100% and DC pass rate 11.4% &rarr; 100%.
+          22.0% &rarr; 99.97% and DC pass rate 11.4% &rarr; 99.7%.
         </p>
       </div>
     </div>
@@ -281,8 +284,8 @@
         AnalogRetriever achieves an average <b>Recall@1 of 75.2%</b> across all six cross-modal directions,
         outperforming the strongest external baseline (CROP, 4.7%) by over <b>15&times;</b>. Introducing the code
         modality yields mutual enhancement: even Text&harr;Image directions improve by up to <b>+8.7 R@1</b>.
-        Port-aware RGCN adds <b>+1.6 Avg R@1</b> over the edge-agnostic GCN, and the three-phase curriculum with
-        auxiliary classification adds <b>+7.5 Avg R@1</b> over the non-curriculum variant. Every direction exceeds
+        Port-aware RGCN adds <b>+1.2 Avg R@1</b> over the edge-agnostic GCN, and the Phase-2 optimizer restart
+        together with the Phase-3 hard-negative curriculum adds <b>+7.5 Avg R@1</b> over TIC (RGCN). Every direction exceeds
         94% at R@5 and 97% at R@10.
       </p>
     </div>
@@ -310,7 +313,7 @@
         </thead>
         <tbody>
           <tr>
-            <td class="rowhead">CLIP <sup>[13]</sup></td>
+            <td class="rowhead">CLIP <sup>[16]</sup></td>
             <td class="v">1.2</td><td class="v">4.6</td><td class="v">8.9</td>
             <td class="v">2.2</td><td class="v">8.2</td><td class="v">13.5</td>
             <td class="v">2.9</td><td class="v">9.7</td><td class="v">16.2</td>
@@ -320,7 +323,7 @@
             <td class="v">2.5</td>
           </tr>
           <tr>
-            <td class="rowhead">CROP <sup>[14]</sup></td>
+            <td class="rowhead">CROP <sup>[15]</sup></td>
             <td class="v">2.3</td><td class="v">8.4</td><td class="v">15.0</td>
             <td class="v">2.2</td><td class="v">8.2</td><td class="v">13.5</td>
             <td class="v">9.2</td><td class="v">25.8</td><td class="v">37.1</td>
@@ -330,7 +333,7 @@
             <td class="v">4.7</td>
           </tr>
           <tr>
-            <td class="rowhead">ChatLS <sup>[28]</sup></td>
+            <td class="rowhead">ChatLS <sup>[26]</sup></td>
             <td class="v">0.9</td><td class="v">5.9</td><td class="v">11.3</td>
             <td class="v">2.2</td><td class="v">8.2</td><td class="v">13.5</td>
             <td class="v">9.5</td><td class="v">24.0</td><td class="v">35.1</td>
@@ -340,7 +343,7 @@
             <td class="v">4.0</td>
           </tr>
           <tr>
-            <td class="rowhead">NetTAG <sup>[29]</sup></td>
+            <td class="rowhead">NetTAG <sup>[8]</sup></td>
             <td class="v">0.2</td><td class="v">2.5</td><td class="v">4.5</td>
             <td class="v">2.2</td><td class="v">8.2</td><td class="v">13.5</td>
             <td class="v">0.5</td><td class="v">3.4</td><td class="v">6.8</td>
@@ -393,10 +396,13 @@
       </table>
     </div>
     <p class="tbl-caption">
-      <b>Table 2. Cross-modal retrieval performance on the test set (N=1,000).</b>
+      <b>Table 2. Cross-modal retrieval on the held-out set (Recall@K, %), as reported in the paper.</b>
+      Each evaluation draws ten 200-item galleries from the 1,000 held-out triplets.
       I: Image (schematic), T: Text (description), C: Circuit (netlist). The upper block shows external baselines;
       the lower block our ablations. AnalogRetriever is the full model with RGCN and curriculum learning.
       Cell shading scales with the value within each column; the best per column is bold.
+      Results of the released code and checkpoints are listed in the
+      <a href="https://github.com/yihan-wa/AnalogRetriever_ICCAD#results" target="_blank" rel="noopener">GitHub repository</a>.
     </p>
   </div>
 </section>
@@ -458,15 +464,35 @@
   </div>
 </section>
 
+<!-- ===================== LIMITATIONS ===================== -->
+<section class="section ar-section-alt">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 ar-h2">Limitations &amp; Ongoing Work</h2>
+    <div class="content has-text-justified">
+      <p>
+        AnalogRetriever is an early step toward cross-modal analog circuit retrieval, and the current framework
+        still has many limitations. We are continuing to improve it, including but not limited to enlarging and
+        diversifying the dataset, improving the netlist representation and training strategy, and adopting a more
+        rigorous and convincing evaluation. Questions and suggestions are very welcome &mdash; please open an
+        <a href="https://github.com/yihan-wa/AnalogRetriever_ICCAD/issues" target="_blank" rel="noopener">issue</a>
+        on GitHub.
+      </p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== BIBTEX ===================== -->
 <section class="section">
   <div class="container is-max-desktop">
     <h2 class="title is-3 ar-h2">BibTeX</h2>
-    <pre class="ar-bibtex">@article{wang2026analogretriever,
-  title   = {AnalogRetriever: Learning Cross-Modal Representations for Analog Circuit Retrieval},
-  author  = {Wang, Yihan and Li, Lei and Lai, Yao and Wang, Jing and Lu, Yan},
-  journal = {arXiv preprint arXiv:2604.23195},
-  year    = {2026}
+    <pre class="ar-bibtex">@inproceedings{wang2026analogretriever,
+  title     = {AnalogRetriever: Learning Cross-Modal Representations for Analog Circuit Retrieval},
+  author    = {Wang, Yihan and Li, Lei and Lai, Yao and Wang, Jing and Lu, Yan},
+  booktitle = {IEEE/ACM International Conference on Computer-Aided Design (ICCAD '26)},
+  year      = {2026},
+  address   = {San Jose, CA, USA},
+  publisher = {ACM},
+  doi       = {10.1145/3831252.3834253}
 }</pre>
   </div>
 </section>

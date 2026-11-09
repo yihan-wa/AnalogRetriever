@@ -189,15 +189,6 @@ table.ar-table.ar-compact td.rowhead sup { font-weight: 400; color: var(--ar-mut
   background: #1f2733; color: #fff; border: none;
 }
 .button.is-ar-dark:hover { background: #2c3848; color:#fff; }
-.button.is-ar-soon {
-  background: #e7eaf0; color: #8a909b; border: none; cursor: default;
-}
-.button.is-ar-soon:hover { transform: none; }
-.soon-badge {
-  font-size: 0.62rem; font-weight: 700; margin-left: 0.4rem;
-  background: var(--ar-accent); color: #fff; border-radius: 4px;
-  padding: 0.05rem 0.35rem; letter-spacing: 0.04em;
-}
 
 /* ---------- Sections ---------- */
 .section { padding: 2.6rem 1.5rem; }
